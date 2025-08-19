@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exemplo conversa com ia api em node</title>
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <header>
+      <div class="menu">
+        <a href="login.html">Login</a>
+        <a href="cadastro.html">Cadastro</a>
+        <a href="conversaia.html">Conversa com IA</a>
+        <a href="excluirconta.html">Excluir Conta</a>
+        <a href="recuperarsenha.html">Recuperar Senha</a>
+      </div>
+    </header>
+
+    <main>
+      <div id="chat-container" class="chatcontainer">
+        <div class="titulochat">
+          <p>Chat com a IA</p>
+          <button id="chat-close">X</button>
+        </div>
+        <div class="conversa" id="chat-conversation">
+        </div>
+        <div class="teclado">
+          <input
+            id="chat-input"
+            type="text"
+            placeholder="Digite sua mensagem..."
+          />
+          <button id="chat-send">Enviar</button>
+        </div>
+      </div>
+
+      <script>
+                var chatInput = document.getElementById("chat-input");
+        var chatSend = document.getElementById("chat-send");
+        var chatConversation = document.getElementById("chat-conversation");
+
+        async function sendChatMessage() {
+          var userMessages = chatInput.value;
+          if (!userMessages.trim()) return;
+          chatConversation.innerHTML += `<p>${userMessages}</p>`;
+          chatInput.value = "";
+          chatConversation.innerHTML += `<span class="loading-response"></span>`;
+          const response = await fetch("http://localhost:8080/openai/ia", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pergunta: userMessages }),
+          });
+          const data = await response.json();
+          const loadingMsg = chatConversation.querySelector("span.loading-response");
+          if (loadingMsg) loadingMsg.remove();
+          chatConversation.innerHTML += `<span>${data.resposta}</span>`;
+          // Scroll para o final
+          chatConversation.scrollTop = chatConversation.scrollHeight;
+        }
+
+        chatSend.onclick = sendChatMessage;
+
+        chatInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            sendChatMessage();
+          }
+        });
+
+        chatClose = document.getElementById("chat-close");
+        chatContainer = document.getElementById("chat-container");
+
+        chatClose.onclick = function () {
+          chatContainer.style.bottom = "-2000px";
+        };
+
+        chatOpen = document.getElementById("chat-toggle");
+
+        chatOpen.onclick = function () {
+          chatContainer.style.bottom = "20px";
+        };
+      </script>
+
+    </main>
+
+    <footer>
+      <p>Esta pagina foi criada como um exemplo de uso da API em Node.js</p>
+    </footer>
+  </body>
+</html>

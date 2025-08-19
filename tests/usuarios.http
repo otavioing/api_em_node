@@ -1,0 +1,24 @@
+### Teste de API para usuários
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiZW1haWwiOiJ0ZWN0b25pY3Jvb20zNTZAZ21haWwuY29tIiwiaWF0IjoxNzU1NTI2MjE3LCJleHAiOjE3NTYxMzEwMTd9.TGkqbtyhZ4j6YdQ8aEpSJM0rEtQJg8dLauzstq9Fo4Q
+
+
+### Teste de obtenção de usuário
+### Descrição: Obtém a lista de usuários cadastrados
+GET http://localhost:8080/usuarios
+
+### Teste de obtenção de usuário por ID
+### Descrição: Obtém os detalhes do usuário com ID 5
+GET http://localhost:8080/usuarios/3
+Authorization: Bearer {{token}}
+
+### Teste login de usuário
+### Descrição: Realiza o login do usuário com email e senha fornecidos
+
+POST http://localhost:8080/usuarios/login
+Content-Type: application/json
+
+{
+  "email": "tectonicroom356@gmail.com",
+  "senha": "Otavio2006"
+}

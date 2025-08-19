@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exemplo login api em node</title>
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <header>
+      <div class="menu">
+        <a href="login.html">Login</a>
+        <a href="cadastro.html">Cadastro</a>
+        <a href="conversaia.html">Conversa com IA</a>
+        <a href="excluirconta.html">Excluir Conta</a>
+        <a href="recuperarsenha.html">Recuperar Senha</a>
+      </div>
+    </header>
+    <main>
+
+      <form id="formlogin">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="senha">Senha:</label>
+          <input type="password" id="senha" name="senha" required />
+
+          <button type="submit">Login</button>
+      </form>
+
+<script>
+  const formLogin = document.getElementById("formlogin");
+
+  formLogin.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+
+    try {
+      const response = await fetch("http://localhost:8080/usuarios/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert("Erro: " + data.message);
+        return;
+      }
+
+      // ✅ Login bem-sucedido
+      alert("Bem-vindo, " + data.usuario.nome);
+
+      // Salva o token JWT no navegador
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userid", JSON.stringify(data.id));
+
+      // (Opcional) redirecionar para outra página
+      // window.location.href = "/dashboard.html";
+    } catch (err) {
+      alert("Erro de conexão: " + err.message);
+    }
+  });
+</script>
+
+
+    </main>
+
+    <footer>
+      <p>Esta pagina foi criada como um exemplo de uso da API em Node.js</p>
+    </footer>
+  </body>
+</html>

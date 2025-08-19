@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exemplo cadastro api em node</title>
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <header>
+      <div class="menu">
+        <a href="login.html">Login</a>
+        <a href="cadastro.html">Cadastro</a>
+        <a href="conversaia.html">Conversa com IA</a>
+        <a href="excluirconta.html">Excluir Conta</a>
+        <a href="recuperarsenha.html">Recuperar Senha</a>
+      </div>
+    </header>
+
+    <main>
+      <form id="formcadastro">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required />
+
+        <button type="submit">Cadastrar</button>
+      </form>
+
+      <div id="verificacaoContainer">
+        <label for="codigoVerificacao"
+          >Digite o código enviado ao seu Email:</label
+        >
+        <input type="text" id="codigoVerificacao" placeholder="Ex: 123456" />
+        <button type="button" id="verificarCodigoBtn">Verificar Código</button>
+      </div>
+
+      <script>
+        const cadastroForm = document.getElementById("formcadastro");
+        const verificacaoContainer = document.getElementById("verificacaoContainer");
+        const verificarCodigoBtn = document.getElementById("verificarCodigoBtn");
+        const codigoVerificacaoInput = document.getElementById("codigoVerificacao");
+
+        let codigoGerado = null;
+        let dadosTemporarios = {}; // para guardar os dados até verificar
+      
+        cadastroForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const nome = document.getElementById('nome').value;
+  const email = document.getElementById('email').value;
+  const senha = document.getElementById('senha').value;
+
+  // Salva para depois usar na criação
+  dadosTemporarios = { nome, email, senha,};
+
+  try {
+    const response = await fetch('http://localhost:8080/email/solicitar-criacao', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, email, senha })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert('Erro ao solicitar verificação: ' + data.message);
+      return;
+    }
+
+    codigoGerado = data.codigo; // salvar o código enviado
+    verificacaoContainer.style.display = 'flex'; // mostra o campo de verificação
+
+  } catch (err) {
+    alert("Erro: " + err.message);
+  }
+});
+
+// Verificação do código
+verificarCodigoBtn.addEventListener('click', async () => {
+  const codigoDigitado = codigoVerificacaoInput.value;
+
+  if (codigoDigitado != codigoGerado) {
+    alert("Código incorreto!");
+    return;
+  }
+
+  // Criando objeto normal em vez de FormData
+  const payload = {
+    nome: dadosTemporarios.nome,
+    email: dadosTemporarios.email,
+    senha: dadosTemporarios.senha
+  };
+
+  try {
+    const finalResponse = await fetch('http://localhost:8080/usuarios', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"  // agora indicamos JSON
+      },
+      body: JSON.stringify(payload) // converte para JSON
+    });
+
+    const finalData = await finalResponse.json();
+
+    if (finalResponse.ok) {
+      alert("Conta criada com sucesso!");
+      cadastroForm.reset();
+      verificacaoContainer.style.display = 'none';
+      codigoVerificacaoInput.value = '';
+    } else {
+      alert("Erro ao criar conta: " + finalData.message);
+    }
+  } catch (err) {
+    alert("Erro ao criar conta: " + err.message);
+  }
+});
+
+      </script>
+    </main>
+
+    <footer>
+      <p>Esta pagina foi criada como um exemplo de uso da API em Node.js</p>
+    </footer>
+  </body>
+</html>
