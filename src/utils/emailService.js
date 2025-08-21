@@ -64,8 +64,27 @@ const enviaremailrecuperacao = async (email, nome, codigo) => {
   console.log("Email de recuperação de senha enviado:", info.messageId);
 };
 
+const enviarEmailLogin = async (email, nome, ip, navegador) => {
+  const info = await transporter.sendMail({
+    from: `"App" <${email}>`,
+    to: email,
+    subject: "Login Realizado",
+    text: `Olá ${nome}, você realizou um login em sua conta.`,
+    html: `
+    <main>
+            <h1><b>Olá ${nome}, você realizou um login em sua conta.</b></h1>
+            <p>IP: ${ip}</p>
+            <p>Navegador: ${navegador}</p>
+            <p>Se você não reconhece este login, altere sua senha imediatamente.</p>
+</main>`
+  });
+
+  console.log("Email de aviso de login enviado:", info.messageId);
+};
+
 module.exports = {
   enviaremailcriacao,
   enviaremailexclusao,
   enviaremailrecuperacao,
+  enviarEmailLogin,
 };

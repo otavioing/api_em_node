@@ -7,6 +7,7 @@ const { banco } = require("./database");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { enviarEmailnotificacaoLogin } = require("./emailusersService");
 
 const GetAll = async () => {
   try {
@@ -31,7 +32,9 @@ const GetById = async (id) => {
 const Erase = async (id, senha) => {
   try {
     // Busca usuário pelo id
-    const [rows] = await banco.query("SELECT * FROM usuarios WHERE id = ?", [id]);
+    const [rows] = await banco.query("SELECT * FROM usuarios WHERE id = ?", [
+      id,
+    ]);
     if (rows.length === 0) {
       throw new Error("Usuário não encontrado!");
     }
@@ -46,13 +49,11 @@ const Erase = async (id, senha) => {
 
     // Deleta usuário
     await banco.query("DELETE FROM usuarios WHERE id = ?", [id]);
-
   } catch (error) {
     console.log("Erro ao conectar ao banco de dados: ", error.message);
     throw new Error(error.message || "Falha ao executar a ação!");
   }
 };
-
 
 const Create = async (nome, email, senhaHash) => {
   try {
@@ -98,6 +99,14 @@ const Login = async (request, response) => {
       { expiresIn: process.env.JWT_EXPIRES || "1d" } // tempo de expiração
     );
 
+    // Chama serviço de email para notificar login
+    try {
+      await enviarEmailnotificacaoLogin(request, {
+        status: () => ({ send: () => {} }),
+      });
+    } catch (e) {
+      console.error("Falha ao enviar email de login:", e.message);
+    }
     // Retorna o usuário e o token
     response.status(200).send({ usuario, token });
   } catch (error) {

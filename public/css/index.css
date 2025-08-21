@@ -40,6 +40,10 @@ footer {
 .menu a:hover {
   transform: scale(1.1);
 }
+
+.paginaselect{
+  color: yellow !important; 
+}
 /* Estilos para o formulário de cadastro */
 
 #formcadastro{
@@ -189,6 +193,17 @@ footer {
 
 #formexcluirconta button:hover {
   background: #555;
+}
+
+#formexcluirconta label {
+  margin-bottom: 5px;
+}
+
+#formexcluirconta input {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 /* Estilos para o formulário de conversa com IA */
 .chatcontainer {

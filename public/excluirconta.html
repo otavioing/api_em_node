@@ -12,17 +12,31 @@
         <a href="login.html">Login</a>
         <a href="cadastro.html">Cadastro</a>
         <a href="conversaia.html">Conversa com IA</a>
-        <a href="excluirconta.html">Excluir Conta</a>
+        <a href="excluirconta.html" class="paginaselect">Excluir Conta</a>
         <a href="recuperarsenha.html">Recuperar Senha</a>
       </div>
     </header>
 
     <main>
       <form id="formexcluirconta">
-          <button type="submit">Excluir Conta</button>
+        <label for="email">Digite seu Email:</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Digite seu email"
+          required
+        />
+        <label for="senha">Digite sua Senha:</label>
+        <input
+          type="password"
+          id="senha"
+          placeholder="Digite sua senha"
+          required
+        />
+        <button type="submit">Excluir Conta</button>
       </form>
 
-            <div id="verificacaoContainer">
+      <div id="verificacaoContainer">
         <label for="codigoVerificacao"
           >Digite o código enviado ao seu Email:</label
         >
@@ -30,6 +44,80 @@
         <button type="button" id="verificarCodigoBtn">Verificar Código</button>
       </div>
     </main>
+
+<script>
+  let codigoGerado = null;
+
+  // Solicitar código de exclusão
+  document.getElementById("formexcluirconta").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+
+    try {
+      const response = await fetch("http://localhost:8080/email/solicitar-exclusao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao solicitar exclusão");
+      }
+
+      const data = await response.json();
+      codigoGerado = data.codigo;
+
+      alert("Código enviado para seu email!");
+      document.getElementById("verificacaoContainer").style.display = "block";
+    } catch (error) {
+      alert("Falha ao enviar código.");
+    }
+  });
+
+  // Verificar código e excluir conta
+  document.getElementById("verificarCodigoBtn").addEventListener("click", async () => {
+    const codigoDigitado = document.getElementById("codigoVerificacao").value;
+
+    if (codigoDigitado != codigoGerado) {
+      alert("Código incorreto!");
+      return;
+    }
+
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+    const userId = localStorage.getItem("userid");
+    const token = localStorage.getItem("token");
+
+    if (!userId) {
+      alert("ID do usuário não encontrado no localStorage!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/usuarios/${userId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro ao excluir conta: ${errorText}`);
+      }
+
+      alert("Conta excluída com sucesso!");
+      localStorage.removeItem("userid");
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+</script>
+
 
     <footer>
       <p>Esta pagina foi criada como um exemplo de uso da API em Node.js</p>

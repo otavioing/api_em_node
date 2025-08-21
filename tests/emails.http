@@ -25,6 +25,5 @@ POST http://localhost:8080/email/solicitar-exclusao
 Content-Type: application/json
 
 {
-    "email": "otaviodominguessilva@gmail.com",
-    "nome": "Otávio"
+    "email": "otaviodominguessilva@gmail.com"
 }
