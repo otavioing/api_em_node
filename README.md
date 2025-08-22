@@ -39,8 +39,8 @@ Essa é uma API feita em **Node.js** que junta o útil ao agradável: gerencia u
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/seu-usuario/seu-repositorio.git
-cd seu-repositorio
+git clone https://github.com/otavioing/api_em_node.git
+cd api_em_node
 
 # 2. Importe o banco
 # Abra o phpMyAdmin (via XAMPP) e importe o arquivo banco.sql que está no repositório
