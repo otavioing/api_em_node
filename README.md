@@ -16,7 +16,7 @@ Essa é uma API feita em **Node.js** que junta o útil ao agradável: gerencia u
   - 🔑 `POST /usuarios/recuperar-senha` → ajuda a recuperar a senha  
 
 - **OpenAI**
-  - 🤖 `POST /openai/chat` → manda uma mensagem pra IA da OpenAI e recebe a resposta  
+  - 🤖 `POST /openai/ia ` → manda uma mensagem pra IA da OpenAI e recebe a resposta  
 
 - **Emails automáticos**
   - 📧 Criação de conta  
